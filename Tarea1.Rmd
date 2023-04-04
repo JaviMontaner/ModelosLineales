@@ -1,0 +1,112 @@
+---
+title: "Tarea PF2 - Modelos Lineales"
+author: "Alejandro Hernandez Beneito, Javier Montaner de Fez y Salvador Gisbert Sempere"
+date: '2023-04-03'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+```
+
+```{r include=FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+#### 1. Un pequeño resumen.
+
+  En nuestro grupo hemos decidido aplicar los conocimientos que hemos adquirido en la asignatura de Modelos Lineales al dataset "2022-2023 Football Player Stats.csv" extraído https://www.kaggle.com/datasets/vivovinco/20222023-football-player-stats?resource=download .
+  
+  Es por ello que trabajaremos con el fin último de predecir los máximos goleadores y asistentes de las mejores ligas de fútbol europeas.
+
+
+#### 2. Introducción.  
+
+  Nuestro dataset original cuenta con 124 variables y +2500 observaciones. Cabe destacar que no trabajaremos con el dataset original sino que  lo haremos con uno con menos variables y observaciones que se acople al nivel del análisis que realizaremos. Para reducirlo hemos tenido en cuenta sólo algunas variables que consideramos son las más influyentes en cuanto a goles y asistencias. 
+  
+  A medida que hemos avanzado con el preprocesado de los datos, nos hemos dado cuenta de que algunas variables no eran del tipo que les tocaba para poder ser analizadas correctamente. Por ejemplo la variable SoT (Shots on Target) originalmente era de tipo character. Para seguir con nuestro análisis hemos cambiado el tipo de algunas variables.
+  
+  Otro problema con el que nos hemos encontrado es que algunas variables estaban registradas en variable/partido. Para obtener las variables totales hemos tenido que modificar nuestro dataset.
+  
+  Por último, hemos eliminado todos aquellos jugadores con menos de 90 minutos jugados, hemos eliminado porteros (no suelen marcar ni asistir y no sería coherente predecir que uno de ellos sea máximo goleador o asistente). Finalmente hemos eliminado jugadores sin goles ni asistencias.
+  
+  A continuación se muestran los nombres de las variables junto con algunas observaciones para poder tener una idea del dataset con el que trabajaremos:
+  
+```{r include=FALSE}
+futbolistas <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'UTF-8')
+```
+
+
+```{r include=FALSE}
+#Comenzamos seleccionando las columnas con las que trabajaremos
+futbolistas<-futbolistas[, c("Player","Age","Pos","Min","Goals","Shots","SoT","PasTotCmp","Assists","PasAss")]
+
+#Convertimos cada variable al tipo adecuado para trabajar con ellas de manera correcta
+futbolistas$Assists <- as.numeric(futbolistas$Assists)
+futbolistas$Shots <- as.numeric(futbolistas$Shots)
+futbolistas$SoT <- as.numeric(futbolistas$SoT)
+futbolistas$PasTotCmp <- as.numeric(futbolistas$PasTotCmp)
+futbolistas$PasAss <- as.numeric(futbolistas$PasAss)
+futbolistas$Pos <- ifelse(nchar(futbolistas$Pos) > 2, substr(futbolistas$Pos, 1, 2), futbolistas$Pos)
+futbolistas$Pos <- as.factor(futbolistas$Pos)
+
+#Creamos variables en las que recogeremos las estadísticas totales (en nuestro dataset se muestran estadísticas por partidos)
+futbolistas <- futbolistas %>% mutate(Total_Assists = round((futbolistas$Min/90) * futbolistas$Assists))
+futbolistas <- futbolistas %>% mutate(Total_Shots = round((futbolistas$Min/90) * futbolistas$Shots))
+futbolistas <- futbolistas %>% mutate(Total_SoT = round((futbolistas$Min/90) * futbolistas$SoT))
+futbolistas <- futbolistas %>% mutate(Total_Passes = round((futbolistas$Min/90) * futbolistas$PasTotCmp))
+futbolistas <- futbolistas %>% mutate(Total_Key_Passes = round((futbolistas$Min/90) * futbolistas$PasAss))
+
+#Nos quedamos con las observaciones que cumplan las condiciones (no tiene sentido tener en cuenta jugadores que no han jugado)
+futbolistas <- futbolistas %>% filter(Min >= 90)    %>%
+                               filter(Pos != "GK")  %>% 
+                               filter(Assists > 0 | Goals > 0)
+```
+
+```{r echo=FALSE}
+head(futbolistas)
+```
+  Las variables que contiene nuestro dataset son:
+  
+  Player: Nombre del futbolista
+  Age: Edad del futbolista
+  Min: Minutos jugados en total 
+  Goals: Goles totales
+  Shots: Tiros por partido
+  SoT: Tiros a puerta por partido
+  PasTotCmp: Pases totales por partido
+  Assits: Asistencias por partido
+  PasAss: Pases clave por partido
+  Total_Assists: Asistencias totales
+  Total_Shots: Tiros totales
+  Total_SoT: Tiros a puerta totales
+  Total_Passes: Pases totales
+  Total_Key_Passes: Pases clave totales
+  
+```{r}
+Defensas <- subset(futbolistas, Pos == "DF")
+Centrocampistas <- subset(futbolistas, Pos == "MF")
+Delanteros <- subset(futbolistas, Pos == "FW")
+
+ggplot(data = Defensas, aes(x=Min ,y=Goals)) + geom_point()
+
+
+lm_futbolistas <- lm(Goals ~ Total_Shots, data = futbolistas)
+coef(lm_futbolistas)
+plot(futbolistas$Goals~futbolistas$Total_Shots, col="Blue")
+abline(coef = coef(lm_futbolistas), col = "Red")
+```
+```{r}
+modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , 
+          data = futbolistas)
+step(modelo)
+
+modelo1 <- lm(Assists ~ Age + Pos + Min + Total_Assists +Total_Passes + Total_Key_Passes , data = futbolistas)
+step(modelo1)
+summary(modelo1)
+```
+
