@@ -108,5 +108,7 @@ step(modelo)
 modelo1 <- lm(Assists ~ Age + Pos + Min + Total_Assists +Total_Passes + Total_Key_Passes , data = futbolistas)
 step(modelo1)
 summary(modelo1)
+
+print("hola")
 ```
 
