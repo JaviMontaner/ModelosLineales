@@ -100,15 +100,4 @@ coef(lm_futbolistas)
 plot(futbolistas$Goals~futbolistas$Total_Shots, col="Blue")
 abline(coef = coef(lm_futbolistas), col = "Red")
 ```
-```{r}
-modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , 
-          data = futbolistas)
-step(modelo)
-
-modelo1 <- lm(Assists ~ Age + Pos + Min + Total_Assists +Total_Passes + Total_Key_Passes , data = futbolistas)
-step(modelo1)
-summary(modelo1)
-
-print("hola")
-```
 
