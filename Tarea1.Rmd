@@ -115,13 +115,13 @@ abline(coef = coef(lm_futbolistas), col = "Red")
 ```{r}
 #Comenzamos con los DEFENSAS
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados en defensas")
+plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Goles en función de los tiros realizados en defensas")
 lm_defensas <- lm(Goals ~ Total_Shots, data = Defensas)
 coef(lm_defensas)
 abline(coef = coef(lm_defensas), col = "Red")
 
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Distribución de las asistencias en función de los pases realizados en defensas")
+plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas")
 lm_defensas <- lm(Total_Assists ~ Total_Passes, data = Defensas)
 coef(lm_defensas)
 abline(coef = coef(lm_defensas), col = "Red")
