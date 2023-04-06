@@ -36,12 +36,14 @@ library(ggplot2)
   
   A continuación se muestran los nombres de las variables junto con algunas observaciones para poder tener una idea del dataset con el que trabajaremos:
   
-```{r include=FALSE}
+```{r echo=TRUE}
+#Cargamos el dataset
 futbolistas <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'UTF-8')
 ```
 
+  Para trabajar de manera más cómoda y acorde a nuestros objetivos, modificaremos el dataset:   
 
-```{r include=FALSE}
+```{r echo=TRUE}
 #Comenzamos seleccionando las columnas con las que trabajaremos
 futbolistas<-futbolistas[, c("Player","Age","Pos","Min","Goals","Shots","SoT","PasTotCmp","Assists","PasAss")]
 
@@ -67,7 +69,7 @@ futbolistas <- futbolistas %>% filter(Min >= 90)    %>%
                                filter(Assists > 0 | Goals > 0)
 ```
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 head(futbolistas)
 ```
   Las variables que contiene nuestro dataset son:
@@ -87,17 +89,102 @@ head(futbolistas)
   Total_Passes: Pases totales
   Total_Key_Passes: Pases clave totales
   
-```{r}
+  Ahora, una vez procesado nuestro dataset y ya con los datos adecuados para seguir trabajando, entramos en materia. Veremos como se distribuyen tanto los goles como las asistencias en los jugadores sin importar la posición:
+```{r echo=TRUE}
+#Separamos a los futbolistas por posición
 Defensas <- subset(futbolistas, Pos == "DF")
 Centrocampistas <- subset(futbolistas, Pos == "MF")
 Delanteros <- subset(futbolistas, Pos == "FW")
 
-ggplot(data = Defensas, aes(x=Min ,y=Goals)) + geom_point()
-
-
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(futbolistas$Total_Shots, futbolistas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados")
 lm_futbolistas <- lm(Goals ~ Total_Shots, data = futbolistas)
 coef(lm_futbolistas)
-plot(futbolistas$Goals~futbolistas$Total_Shots, col="Blue")
 abline(coef = coef(lm_futbolistas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(futbolistas$Total_Passes,futbolistas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Distribución de las asistencias en función de los pases realizados")
+lm_futbolistas <- lm(Total_Assists ~ Total_Passes, data = futbolistas)
+coef(lm_futbolistas)
+abline(coef = coef(lm_futbolistas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+
+```
+  Hagamos lo mismo ahora pero para cada posición. ¿Afectará la posición a la distribución de los goles? ¿Y de las asistencias?
+
+```{r}
+#Comenzamos con los DEFENSAS
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados en defensas")
+lm_defensas <- lm(Goals ~ Total_Shots, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Distribución de las asistencias en función de los pases realizados en defensas")
+lm_defensas <- lm(Total_Assists ~ Total_Passes, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+```
+
+```{r}
+#Comenzamos con los DEFENSAS
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Goles en función de los tiros realizados en defensas", xlab = "Tiros totales", ylab = "Goles")
+lm_defensas <- lm(Goals ~ Total_Shots, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas")
+lm_defensas <- lm(Total_Assists ~ Total_Passes, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+```
+
+```{r}
+#Comenzamos con los CENTROCAMPISTAS
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Centrocampistas$Total_Shots, Centrocampistas$Goals, col="Blue", main = "Goles en función de los tiros realizados en centrocampistas", xlab = "Tiros totales", ylab = "Goles")
+lm_centrocampistas <- lm(Goals ~ Total_Shots, data = Centrocampistas)
+coef(lm_centrocampistas)
+abline(coef = coef(lm_centrocampistas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Centrocampistas$Total_Passes,Centrocampistas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en centrocampistas")
+lm_centrocampistas <- lm(Total_Assists ~ Total_Passes, data = Centrocampistas)
+coef(lm_centrocampistas)
+abline(coef = coef(lm_centrocampistas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+```
+
+```{r}
+#Comenzamos con los DELANTEROS
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Delanteros$Total_Shots, Delanteros$Goals, col="Blue", main = "Goles en función de los tiros realizados en delanteros", xlab = "Tiros totales", ylab = "Goles")
+lm_delanteros <- lm(Goals ~ Total_Shots, data = Delanteros)
+coef(lm_delanteros)
+abline(coef = coef(lm_delanteros), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Delanteros$Total_Passes,Delanteros$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en delanteros")
+lm_delanteros <- lm(Total_Assists ~ Total_Passes, data = Delanteros)
+coef(lm_delanteros)
+abline(coef = coef(lm_delanteros), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+```
+
+
+```{r echo=TRUE}
+modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , 
+          data = futbolistas)
+step(modelo)
+
+modelo1 <- lm(Assists ~ Age + Pos + Min + Total_Assists +Total_Passes + Total_Key_Passes , data = futbolistas)
+step(modelo1)
+summary(modelo1)
+
 ```
 
