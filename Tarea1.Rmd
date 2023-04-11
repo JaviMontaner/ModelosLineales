@@ -15,6 +15,7 @@ knitr::opts_chunk$set(include = FALSE)
 library(readr)
 library(dplyr)
 library(ggplot2)
+library(corrplot)
 ```
 
 #### 1. Un pequeño resumen.
@@ -49,6 +50,8 @@ futbolistas<-futbolistas[, c("Player","Age","Pos","Min","Goals","Shots","SoT","P
 
 #Convertimos cada variable al tipo adecuado para trabajar con ellas de manera correcta
 futbolistas$Assists <- as.numeric(futbolistas$Assists)
+futbolistas$Min <- as.numeric(futbolistas$Min)
+futbolistas$Goals <- as.numeric(futbolistas$Goals)
 futbolistas$Shots <- as.numeric(futbolistas$Shots)
 futbolistas$SoT <- as.numeric(futbolistas$SoT)
 futbolistas$PasTotCmp <- as.numeric(futbolistas$PasTotCmp)
@@ -89,7 +92,11 @@ head(futbolistas)
   Total_Passes: Pases totales
   Total_Key_Passes: Pases clave totales
   
+  
   Ahora, una vez procesado nuestro dataset y ya con los datos adecuados para seguir trabajando, entramos en materia. Veremos como se distribuyen tanto los goles como las asistencias en los jugadores sin importar la posición:
+  
+  
+  
 ```{r echo=TRUE}
 #Separamos a los futbolistas por posición
 Defensas <- subset(futbolistas, Pos == "DF")
@@ -97,11 +104,38 @@ Centrocampistas <- subset(futbolistas, Pos == "MF")
 Delanteros <- subset(futbolistas, Pos == "FW")
 
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(futbolistas$Total_Shots, futbolistas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados")
+plot(futbolistas$Total_Shots, futbolistas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados", xlab = "Tiros totales", ylab="Goles")
 lm_futbolistas <- lm(Goals ~ Total_Shots, data = futbolistas)
 coef(lm_futbolistas)
 abline(coef = coef(lm_futbolistas), col = "Red")
 
+plot(lm_futbolistas$residuals, main = "Gráfica de residuos en goles", ylab="Residuos")
+hist(lm_futbolistas$residuals)
+
+
+```
+  
+  Analicemos los modelos que hemos construido. ¿Es un modelo lineal, normal y homocedástico? Vayamos primero con los goles:
+  
+  La linealidad se define como la relación Y = f(X). Ésta debe ser una recta: $Y = β_0 + β_1X$. Así, podemos afirmar que la relación tiros-goles es lineal (si no tenemos en cuenta los outliers). Las observaciones se distribuyen alrededor de la recta de mínimos cuadrados y los residuos entorno a 0.
+  
+  Siguiendo con la normalidad, utilizaremos el gráfico de probabilidad-normal paraaceptar esta suposición o rechazarla. Este método muestra los cuantiles de la muestra frente a los cuantiles teóricos. Además añadimos una recta que relaciona de manera ideal ambos cuantiles. Digamos que sería lo "más normal".
+```{r}
+qqnorm(lm_futbolistas$residuals)
+qqline(lm_futbolistas$residuals)
+```
+  Vemos que nuestros cuantiles se ajustan bastante bien a los teóricos. Podemos afirmar que cumple con la normalidad.
+  
+  Por último, hablemos de homocedasticidad.
+```{r}
+# Crear un gráfico de dispersión de residuos versus valores predichos
+plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos")
+
+```
+  Podemos observar que la relación entre valores predichos y los residuos sigue una tendencia decreciente. Sabemos que para aceptar la homocedasticidad debería no haber patrones. Por tanto podemos aceptar la heterocedasticidad.
+  
+  Todo esto con el modelo que relaciona los goles con los tiros. Vayamos ahora a las asistencias frente a los pases totales.
+```{r}
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
 plot(futbolistas$Total_Passes,futbolistas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Distribución de las asistencias en función de los pases realizados")
 lm_futbolistas <- lm(Total_Assists ~ Total_Passes, data = futbolistas)
@@ -109,7 +143,14 @@ coef(lm_futbolistas)
 abline(coef = coef(lm_futbolistas), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 
-```
+plot(lm_futbolistas$residuals, main = "Gráfica de residuos en asistencias", ylab = "Residuos")
+hist(lm_futbolistas$residuals)
+``` 
+  
+  
+  
+  
+  
   Hagamos lo mismo ahora pero para cada posición. ¿Afectará la posición a la distribución de los goles? ¿Y de las asistencias?
 
 ```{r}
@@ -128,21 +169,6 @@ abline(coef = coef(lm_defensas), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 ```
 
-```{r}
-#Comenzamos con los DEFENSAS
-#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Goles en función de los tiros realizados en defensas", xlab = "Tiros totales", ylab = "Goles")
-lm_defensas <- lm(Goals ~ Total_Shots, data = Defensas)
-coef(lm_defensas)
-abline(coef = coef(lm_defensas), col = "Red")
-
-#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas")
-lm_defensas <- lm(Total_Assists ~ Total_Passes, data = Defensas)
-coef(lm_defensas)
-abline(coef = coef(lm_defensas), col = "Red")
-#Tener en cuenta los pases clave si pertoca
-```
 
 ```{r}
 #Comenzamos con los CENTROCAMPISTAS
@@ -176,11 +202,22 @@ abline(coef = coef(lm_delanteros), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 ```
 
+```{r}
+#Gráfico de las correlaciones
+futbolistas_cor <- futbolistas[4:15]
+corrplot(cor(futbolistas_cor))
+```
+  Con este gráfico podemos observar la correlación que existe con cada variable. Vemos que para predecir goles tendría sentido tomar en cuenta los, los tiros y los tiros a portería. En cuanto a las asistencias vemos que están muy relacionadas con los pases clave.
+
+
+
+
 
 ```{r echo=TRUE}
 modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , 
           data = futbolistas)
 step(modelo)
+
 
 modelo1 <- lm(Assists ~ Age + Pos + Min + Total_Assists +Total_Passes + Total_Key_Passes , data = futbolistas)
 step(modelo1)
