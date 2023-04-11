@@ -129,7 +129,7 @@ qqline(lm_futbolistas$residuals)
   Por último, hablemos de homocedasticidad.
 ```{r}
 # Creamos un gráfico de dispersión de residuos versus valores predichos
-plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos")
+plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión de residuos vs valores predichos")
 ```
   Podemos observar que la relación entre valores predichos y los residuos sigue una tendencia decreciente. Sabemos que para aceptar la homocedasticidad debería no haber patrones. Por tanto podemos aceptar la heterocedasticidad.
   
@@ -157,9 +157,9 @@ qqline(lm_futbolistas$residuals)
   Por último, vayamos con la homocedasticidad:
 ```{r}
 # Creamos un gráfico de dispersión de residuos versus valores predichos
-plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos")
+plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
 ```
- Podemos decir que no cumple con la homocedasticidad pues siguen un parámetro descendente. Por tanto aceptamos la heterocedasticidad.
+ Podemos decir que no cumple con la homocedasticidad pues siguen una tendencia descendente. Por tanto aceptamos la heterocedasticidad.
   
   
   Hagamos lo mismo ahora pero para cada posición. ¿Afectará la posición a la distribución de los goles? ¿Y de las asistencias?
@@ -212,7 +212,7 @@ coef(lm_delanteros)
 abline(coef = coef(lm_delanteros), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 ```
-
+  Para empezar a modelar en función de nuestro objetivo, veamos las correlaciones entre las distintas variables:
 ```{r}
 #Gráfico de las correlaciones
 futbolistas_cor <- futbolistas[4:15]
@@ -220,13 +220,19 @@ corrplot(cor(futbolistas_cor))
 ```
   Con este gráfico podemos observar la correlación que existe con cada variable. Vemos que para predecir goles tendría sentido tomar en cuenta los, los tiros y los tiros a portería. En cuanto a las asistencias vemos que están muy relacionadas con los pases clave.
 
+  Empecemos a construir el modelo que predecirán nuestras variables. Para predecir los goles:
 
+```{r}
+#Primero comenzaremos tomando todas las variables 
+modelo_goles1 <- lm(Goals ~ ., data = futbolistas)
 
+#Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
+modelo_goles <- step(modelo_goles1)
+```
 
 
 ```{r echo=TRUE}
-modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , 
-          data = futbolistas)
+modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , data = futbolistas)
 step(modelo)
 
 
