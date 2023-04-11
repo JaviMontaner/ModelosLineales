@@ -128,9 +128,8 @@ qqline(lm_futbolistas$residuals)
   
   Por último, hablemos de homocedasticidad.
 ```{r}
-# Crear un gráfico de dispersión de residuos versus valores predichos
+# Creamos un gráfico de dispersión de residuos versus valores predichos
 plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos")
-
 ```
   Podemos observar que la relación entre valores predichos y los residuos sigue una tendencia decreciente. Sabemos que para aceptar la homocedasticidad debería no haber patrones. Por tanto podemos aceptar la heterocedasticidad.
   
@@ -146,9 +145,21 @@ abline(coef = coef(lm_futbolistas), col = "Red")
 plot(lm_futbolistas$residuals, main = "Gráfica de residuos en asistencias", ylab = "Residuos")
 hist(lm_futbolistas$residuals)
 ``` 
+  Con respecto a la linealidad no podemos asegurar que lo sea, pues no sólo no se distribuyen los datos en forma de recta sino que además los residuos no se distribuyen exactamente entorno al 0 sino que está un poco desplazado.
   
+  Analicemos ahora la normalidad siguiendo el mismo procedimiento que antes:
+```{r}
+qqnorm(lm_futbolistas$residuals)
+qqline(lm_futbolistas$residuals)
+```
+  Vemos que no cumple con la normalidad.
   
-  
+  Por último, vayamos con la homocedasticidad:
+```{r}
+# Creamos un gráfico de dispersión de residuos versus valores predichos
+plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos")
+```
+ Podemos decir que no cumple con la homocedasticidad pues siguen un parámetro descendente. Por tanto aceptamos la heterocedasticidad.
   
   
   Hagamos lo mismo ahora pero para cada posición. ¿Afectará la posición a la distribución de los goles? ¿Y de las asistencias?
