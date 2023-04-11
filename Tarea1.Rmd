@@ -230,6 +230,15 @@ modelo_goles1 <- lm(Goals ~ ., data = futbolistas)
 modelo_goles <- step(modelo_goles1)
 ```
 
+  Hagamos lo mismo con las asistencias:
+  
+```{r}
+#Primero comenzaremos tomando todas las variables 
+modelo_asistencias1 <- lm(Total_Assists ~ ., data = futbolistas)
+
+#Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
+modelo_asistencias <- step(modelo_asistencias1)
+```
 
 ```{r echo=TRUE}
 modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , data = futbolistas)
