@@ -143,13 +143,12 @@ futbolistas3$Pos <- as.factor(futbolistas3$Pos)
 #Construimos el dataframe definitivo
 futbolistas <- data.frame(Player = futbolistas3$Player, Pos = futbolistas3$Pos, Age = futbolistas3$Age, Min_2021_2022 = futbolistas3$Min.y, Min_2022_2023 = futbolistas3$Min.x, Goals_2021_2022 = futbolistas3$Goals.y, Goals_2022_2023 = futbolistas3$Goals.x, Shots_2021_2022 = futbolistas3$Shots.y, Shots_2022_2023 = futbolistas3$Shots.x, SoT_2021_2022 = futbolistas3$SoT.y, SoT_2022_2023 = futbolistas3$SoT.x, PassTotCmp_2021_2022 = futbolistas3$PasTotCmp.y, PassTotCmp_2022_2023 = futbolistas3$PasTotCmp.x, Assists_2021_2022 = futbolistas3$Assists.y, Assists_2022_2023 = futbolistas3$Assists.x, PasAss_2021_2022 = futbolistas3$PasAss.y, PasAss_2022_2023 = futbolistas3$PasAss.x, Total_Assists_2021_2022 = futbolistas3$Total_Assists.y, Total_Assists_2022_2023 = futbolistas3$Total_Assists.x, Total_Shots_2021_2022 = futbolistas3$Total_Shots.y, Total_Shots_2022_2023 = futbolistas3$Total_Shots.x, Total_SoT_2021_2022 = futbolistas3$Total_SoT.y, Total_SoT_2022_2023 = futbolistas3$Total_SoT.x, Total_Passes_2021_2022 = futbolistas3$Total_Passes.y, Total_Passes_2022_2023 = futbolistas3$Total_Passes.x, Total_Key_Passes_2021_2022 = futbolistas3$Total_Key_Passes.y, Total_Key_Passes_2022_2023 = futbolistas3$Total_Key_Passes.x)
 
-# Reemplazamos todos los valores NA con 0 en el dataframe
+# Reemplazamos todos los valores NA con 0 en el dataframe:
 futbolistas[is.na(futbolistas)] <- 0
-
+futbolistas3[is.na(futbolistas3)] <- 0 #más adelante lo usaremos para ilustrar mejor las correlaciones
 #Eliminamos los dataframes auxiliares que hemos usado para depurar los datos:
 rm(futbolistas1)
 rm(futbolistas2)
-rm(futbolistas3)
 ```
 
 
@@ -193,8 +192,6 @@ abline(coef = coef(lm_futbolistas_1), col = "Red")
 
 plot(lm_futbolistas_1$residuals, main = "Gráfica de residuos en goles", ylab="Residuos")
 hist(lm_futbolistas_1$residuals)
-
-
 ```
   
   Analicemos los modelos que hemos construido. ¿Es un modelo lineal, normal y homocedástico? Vayamos primero con los goles:
@@ -218,7 +215,7 @@ plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuo
   Todo esto con el modelo que relaciona los goles con los tiros en la temporada 2021-2022. Vayamos ahora a las asistencias frente a los pases totales.
 ```{r}
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias en 2021-2022)
-plot(futbolistas$Total_Passes_2021_2022,futbolistas$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales 2021-2022", ylab = "Asistencias 2021-2022", main = "Distribución de las asistencias en función de los pases realizados 2021-2022")
+plot(futbolistas$Total_Passes_2021_2022,futbolistas$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales 2021-2022", ylab = "Asistencias 2021-2022", main = "Asistencias en función de los pases realizados 2021-2022")
 lm_futbolistas_1 <- lm(Total_Assists_2021_2022 ~ Total_Passes_2021_2022, data = futbolistas)
 coef(lm_futbolistas_1)
 abline(coef = coef(lm_futbolistas_1), col = "Red")
@@ -242,21 +239,87 @@ qqline(lm_futbolistas_1$residuals)
 plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
 ```
  Podemos decir que no cumple con la homocedasticidad pues siguen una tendencia descendente. Por tanto aceptamos la heterocedasticidad.
+
+  Vayamos con la temporada 2022-2023:
+```{r}
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles en la temporada 2022-2023)
+plot(futbolistas$Total_Shots_2022_2023, futbolistas$Goals_2022_2023, col="Blue", main = "Distribución de los goles en función de los tiros realizados 2022-2023", xlab = "Tiros totales 2022-2023", ylab="Goles 2022-2023")
+lm_futbolistas_1 <- lm(Goals_2022_2023 ~ Total_Shots_2022_2023, data = futbolistas)
+coef(lm_futbolistas_1)
+abline(coef = coef(lm_futbolistas_1), col = "Red")
+
+plot(lm_futbolistas_1$residuals, main = "Gráfica de residuos en goles", ylab="Residuos")
+hist(lm_futbolistas_1$residuals)
+```
+  Cumple con la linealidad.
+
+Analicemos ahora la normalidad siguiendo el mismo procedimiento que antes:
+```{r}
+qqnorm(lm_futbolistas_1$residuals)
+qqline(lm_futbolistas_1$residuals)
+```
+  No cumple con la normalidad tampoco.
+  Veamos la homocedasticidad:
+```{r}
+# Creamos un gráfico de dispersión de residuos versus valores predichos
+plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
+```
+  Cumple con la Heterocedasticidad
+
+  Vayamos con las asistencias de la misma temporada.
   
+```{r}
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias en 2022-2023)
+plot(futbolistas$Total_Passes_2022_2023,futbolistas$Total_Assists_2022_2023, col="Blue", xlab = "Pases Totales 2022_2023", ylab = "Asistencias 2022_2023", main = "Distribución de las asistencias en función de los pases realizados 2022_2023")
+lm_futbolistas_1 <- lm(Total_Assists_2022_2023 ~ Total_Passes_2022_2023, data = futbolistas)
+coef(lm_futbolistas_1)
+abline(coef = coef(lm_futbolistas_1), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+
+plot(lm_futbolistas_1$residuals, main = "Gráfica de residuos en asistencias", ylab = "Residuos")
+hist(lm_futbolistas_1$residuals)
+```
+ No podemos aceptar la linealidad.
+
+```{r}
+qqnorm(lm_futbolistas_1$residuals)
+qqline(lm_futbolistas_1$residuals)
+```
+  Tampoco aceptamos la normalidad.
+  
+```{r}
+# Creamos un gráfico de dispersión de residuos versus valores predichos
+plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
+```
+  Tampoco la homocedasticidad. Diremos que es heterocedástico.
   
   Hagamos lo mismo ahora pero para cada posición. ¿Afectará la posición a la distribución de los goles? ¿Y de las asistencias?
 
 ```{r}
-#Comenzamos con los DEFENSAS
+#Comenzamos con los DEFENSAS en 2021-2022
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(Defensas$Total_Shots, Defensas$Goals, col="Blue", main = "Goles en función de los tiros realizados en defensas")
-lm_defensas <- lm(Goals ~ Total_Shots, data = Defensas)
+plot(Defensas$Total_Shots_2021_2022, Defensas$Goals_2021_2022, col="Blue", main = "Goles en función de los tiros realizados en defensas 2021-2022")
+lm_defensas <- lm(Goals_2021_2022 ~ Total_Shots_2021_2022, data = Defensas)
 coef(lm_defensas)
 abline(coef = coef(lm_defensas), col = "Red")
 
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(Defensas$Total_Passes,Defensas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas")
-lm_defensas <- lm(Total_Assists ~ Total_Passes, data = Defensas)
+plot(Defensas$Total_Passes_2021_2022,Defensas$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas 2021-2022")
+lm_defensas <- lm(Total_Assists_2021_2022 ~ Total_Passes_2021_2022, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+
+#DEFENSAS en 2022-2023
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Defensas$Total_Shots_2022_2023, Defensas$Goals_2022_2023, col="Blue", main = "Goles en función de los tiros realizados en defensas 2022-2023")
+lm_defensas <- lm(Goals_2022_2023 ~ Total_Shots_2022_2023, data = Defensas)
+coef(lm_defensas)
+abline(coef = coef(lm_defensas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Defensas$Total_Passes_2022_2023,Defensas$Total_Assists_2022_2023, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en defensas 2022-2023")
+lm_defensas <- lm(Total_Assists_2022_2023 ~ Total_Passes_2022_2023, data = Defensas)
 coef(lm_defensas)
 abline(coef = coef(lm_defensas), col = "Red")
 #Tener en cuenta los pases clave si pertoca
@@ -264,41 +327,74 @@ abline(coef = coef(lm_defensas), col = "Red")
 
 
 ```{r}
-#Comenzamos con los CENTROCAMPISTAS
+#Comenzamos con los CENTROCAMPISTAS 2021-2022
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(Centrocampistas$Total_Shots, Centrocampistas$Goals, col="Blue", main = "Goles en función de los tiros realizados en centrocampistas", xlab = "Tiros totales", ylab = "Goles")
-lm_centrocampistas <- lm(Goals ~ Total_Shots, data = Centrocampistas)
+plot(Centrocampistas$Total_Shots_2021_2022, Centrocampistas$Goals_2021_2022, col="Blue", main = "Goles en función de los tiros realizados en centrocampistas 2021-2022", xlab = "Tiros totales", ylab = "Goles")
+lm_centrocampistas <- lm(Goals_2021_2022 ~ Total_Shots_2021_2022, data = Centrocampistas)
 coef(lm_centrocampistas)
 abline(coef = coef(lm_centrocampistas), col = "Red")
 
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(Centrocampistas$Total_Passes,Centrocampistas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en centrocampistas")
-lm_centrocampistas <- lm(Total_Assists ~ Total_Passes, data = Centrocampistas)
+plot(Centrocampistas$Total_Passes_2021_2022,Centrocampistas$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en centrocampistas 2021-2022")
+lm_centrocampistas <- lm(Total_Assists_2021_2022 ~ Total_Passes_2021_2022, data = Centrocampistas)
+coef(lm_centrocampistas)
+abline(coef = coef(lm_centrocampistas), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+
+#Temporada 2022-2023
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Centrocampistas$Total_Shots_2022_2023, Centrocampistas$Goals_2022_2023, col="Blue", main = "Goles en función de los tiros realizados en centrocampistas 2022-2023", xlab = "Tiros totales", ylab = "Goles")
+lm_centrocampistas <- lm(Goals_2022_2023 ~ Total_Shots_2022_2023, data = Centrocampistas)
+coef(lm_centrocampistas)
+abline(coef = coef(lm_centrocampistas), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Centrocampistas$Total_Passes_2022_2023,Centrocampistas$Total_Assists_2022_2023, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en centrocampistas 2022-2023")
+lm_centrocampistas <- lm(Total_Assists_2022_2023 ~ Total_Passes_2022_2023, data = Centrocampistas)
 coef(lm_centrocampistas)
 abline(coef = coef(lm_centrocampistas), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 ```
 
 ```{r}
-#Comenzamos con los DELANTEROS
+#Comenzamos con los DELANTEROS 2021-2022
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(Delanteros$Total_Shots, Delanteros$Goals, col="Blue", main = "Goles en función de los tiros realizados en delanteros", xlab = "Tiros totales", ylab = "Goles")
-lm_delanteros <- lm(Goals ~ Total_Shots, data = Delanteros)
+plot(Delanteros$Total_Shots_2021_2022, Delanteros$Goals_2021_2022, col="Blue", main = "Goles en función de los tiros realizados en delanteros 2021-2022", xlab = "Tiros totales", ylab = "Goles")
+lm_delanteros <- lm(Goals_2021_2022 ~ Total_Shots_2021_2022, data = Delanteros)
 coef(lm_delanteros)
 abline(coef = coef(lm_delanteros), col = "Red")
 
 #Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(Delanteros$Total_Passes,Delanteros$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en delanteros")
-lm_delanteros <- lm(Total_Assists ~ Total_Passes, data = Delanteros)
+plot(Delanteros$Total_Passes_2021_2022,Delanteros$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en delanteros 2021-2022")
+lm_delanteros <- lm(Total_Assists_2021_2022 ~ Total_Passes_2021_2022, data = Delanteros)
+coef(lm_delanteros)
+abline(coef = coef(lm_delanteros), col = "Red")
+#Tener en cuenta los pases clave si pertoca
+
+#Temporada 2022-2023
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
+plot(Delanteros$Total_Shots_2022_2023, Delanteros$Goals_2022_2023, col="Blue", main = "Goles en función de los tiros realizados en delanteros 2022-2023", xlab = "Tiros totales", ylab = "Goles")
+lm_delanteros <- lm(Goals_2022_2023 ~ Total_Shots_2022_2023, data = Delanteros)
+coef(lm_delanteros)
+abline(coef = coef(lm_delanteros), col = "Red")
+
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
+plot(Delanteros$Total_Passes_2022_2023,Delanteros$Total_Assists_2022_2023, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Asistencias en función de los pases realizados en delanteros 2022-2023")
+lm_delanteros <- lm(Total_Assists_2022_2023 ~ Total_Passes_2022_2023, data = Delanteros)
 coef(lm_delanteros)
 abline(coef = coef(lm_delanteros), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 ```
   Para empezar a modelar en función de nuestro objetivo, veamos las correlaciones entre las distintas variables:
 ```{r}
+futbolistas2021 <- futbolistas3[2:13] #Datos de la temporada 2021-2022
+futbolistas2023 <- futbolistas3[14:25] #Datos de la temporada 2022-2023
+futbolistas_cor <- futbolistas[4:27] #Todas las variables
 #Gráfico de las correlaciones
-futbolistas_cor <- futbolistas[4:15]
-corrplot(cor(futbolistas_cor))
+
+corrplot(cor(futbolistas2021), main = "Temporada 2021-2022")
+corrplot(cor(futbolistas2023), main = "Temporada 2022-2023")
+corrplot(cor(futbolistas_cor), main = "Teniendo en cuenta todas las variables")
 ```
   Con este gráfico podemos observar la correlación que existe con cada variable. Vemos que para predecir goles tendría sentido tomar en cuenta los, los tiros y los tiros a portería. En cuanto a las asistencias vemos que están muy relacionadas con los pases clave.
 
@@ -306,7 +402,7 @@ corrplot(cor(futbolistas_cor))
 
 ```{r}
 #Primero comenzaremos tomando todas las variables 
-modelo_goles1 <- lm(Goals ~ ., data = futbolistas)
+modelo_goles1 <- lm(Goals_2022_2023 ~ ., data = futbolistas)
 
 #Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
 modelo_goles <- step(modelo_goles1)
