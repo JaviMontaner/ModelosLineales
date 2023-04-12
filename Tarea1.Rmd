@@ -174,6 +174,8 @@ head(futbolistas)
 
   Además se especifica la temporada en que fueron recogidos los datos.
   
+  
+#### 3. Resultados.
   Ahora, una vez procesado nuestro dataset y ya con los datos adecuados para seguir trabajando, entramos en materia. Veremos como se distribuyen tanto los goles como las asistencias en los jugadores sin importar la posición:
   
   
@@ -430,34 +432,34 @@ asistencias2023_2024 <- data.frame(Player = futbolistas$Player, Pos = futbolista
 
 
 ```{r}
-# Obtener predicciones del modelo de goles
+# Obtenemos predicciones del modelo de goles
 predicciones_goles <- predict(modelo_goles, newdata = goles2023_2024)
 
-# Crear un nuevo dataframe con los nombres de los futbolistas y las predicciones de goles
+# Creamos un nuevo dataframe con los nombres de los futbolistas y las predicciones de los goles
 resultado <- data.frame(Nombre = futbolistas$Player, Goles_Predichos = round(predicciones_goles))
 
-# Ordenar el dataframe por el número de goles predichos en orden descendente
+# Ordenamos el dataframe por el número de goles predichos en orden descendente
 resultado <- resultado[order(resultado$Goles_Predichos, decreasing = TRUE), ]
 
-# Imprimir el resultado ordenado
-print(resultado)
-
+# Mostramos el resultado ordenado
+head(resultado, 10)
 ```
 
 ```{r}
 # Obtenemos predicciones del modelo de asistencias
 predicciones_asistencias <- predict(modelo_asistencias, newdata = asistencias2023_2024)
 
-# Crear un nuevo dataframe con los nombres de los futbolistas y las predicciones de goles
+# Creamos un nuevo dataframe con los nombres de los futbolistas y las predicciones de las asistencias
 resultado <- data.frame(Nombre = futbolistas$Player, Asistencias_Predichas = round(predicciones_asistencias))
 
-# Ordenar el dataframe por el número de goles predichos en orden descendente
+# Ordenamos el dataframe por el número de asistencias predichas en orden descendente
 resultado <- resultado[order(resultado$Asistencias_Predichas, decreasing = TRUE), ]
 
-# Imprimir el resultado ordenado
-print(resultado)
+# Imprimimos el resultado ordenado
+head(resultado, 10)
 ```
 
 
-
+#### 4. Conclusiones
+  A medida que hemos ido avanzando nos hemos dado cuenta de que convenía incluir más datos de otra temporada, para así mejorar el modelo y predecir con un poco más exactitud. Además, tener un modelo u otro hace variar mucho las predicciones. Hemos probado con varios modelos, algunos prediciendo barbaridades, y nos hemos dado cuenta de la importancia que tiene la correlación, de que las covariables sean buenas predictoras de la variable respuesta.
 
