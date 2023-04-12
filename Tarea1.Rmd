@@ -39,8 +39,8 @@ library(corrplot)
   
 ```{r echo=TRUE}
 #Cargamos el dataset
-futbolistas1 <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'UTF-8')
-futbolistas3 <- read.csv2("2021-2022 Football Player Stats.csv", encoding =  'UTF-8')
+futbolistas1 <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'latin1')
+futbolistas3 <- read.csv2("2021-2022 Football Player Stats.csv", encoding =  'latin1')
 ```
 
   Para trabajar de manera más cómoda y acorde a nuestros objetivos, modificaremos el dataset:   
@@ -141,7 +141,15 @@ futbolistas3$Pos <- as.factor(futbolistas3$Pos)
 
 ```{r}
 #Construimos el dataframe definitivo
-futbolistas <- data.frame(Player = futbolistas3$Player)
+futbolistas <- data.frame(Player = futbolistas3$Player, Pos = futbolistas3$Pos, Age = futbolistas3$Age, Min_2021_2022 = futbolistas3$Min.x, Min_2022_2023 = futbolistas3$Min.y, Goals_2021_2022 = futbolistas3$Goals.x, Goals_2022_2023 = futbolistas3$Goals.y, Shots_2021_2022 = futbolistas3$Shots.x, Shots_2022_2023 = futbolistas3$Shots.y, SoT_2021_2022 = futbolistas3$SoT.x, SoT_2022_2023 = futbolistas3$SoT.y, PassTotCmp_2021_2022 = futbolistas3$PasTotCmp.x, PassTotCmp_2022_2023 = futbolistas3$PasTotCmp.y, Assists_2021_2022 = futbolistas3$Assists.x, Assists_2022_2023 = futbolistas3$Assists.y, PasAss_2021_2022 = futbolistas3$PasAss.x, PasAss_2022_2023 = futbolistas3$PasAss.y, Total_Assists_2021_2022 = futbolistas3$Total_Assists.x, Total_Assists_2022_2023 = futbolistas3$Total_Assists.y, Total_Shots_2021_2022 = futbolistas3$Total_Shots.x, Total_Shots_2022_2023 = futbolistas3$Total_Shots.y, Total_SoT_2021_2022 = futbolistas3$Total_SoT.x, Total_SoT_2022_2023 = futbolistas3$Total_SoT.y, Total_Passes_2021_2022 = futbolistas3$Total_Passes.x, Total_Passes_2022_2023 = futbolistas3$Total_Passes.y, Total_Key_Passes_2021_2022 = futbolistas3$Total_Key_Passes.x, Total_Key_Passes_2022_2023 = futbolistas3$Total_Key_Passes.y)
+
+# Reemplazamos todos los valores NA con 0 en el dataframe
+futbolistas[is.na(futbolistas)] <- 0
+
+#Eliminamos los dataframes auxiliares que hemos usado para depurar los datos:
+rm(futbolistas1)
+rm(futbolistas2)
+rm(futbolistas3)
 ```
 
 
