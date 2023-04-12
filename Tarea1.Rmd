@@ -141,7 +141,7 @@ futbolistas3$Pos <- as.factor(futbolistas3$Pos)
 
 ```{r}
 #Construimos el dataframe definitivo
-futbolistas <- data.frame(Player = futbolistas3$Player, Pos = futbolistas3$Pos, Age = futbolistas3$Age, Min_2021_2022 = futbolistas3$Min.x, Min_2022_2023 = futbolistas3$Min.y, Goals_2021_2022 = futbolistas3$Goals.x, Goals_2022_2023 = futbolistas3$Goals.y, Shots_2021_2022 = futbolistas3$Shots.x, Shots_2022_2023 = futbolistas3$Shots.y, SoT_2021_2022 = futbolistas3$SoT.x, SoT_2022_2023 = futbolistas3$SoT.y, PassTotCmp_2021_2022 = futbolistas3$PasTotCmp.x, PassTotCmp_2022_2023 = futbolistas3$PasTotCmp.y, Assists_2021_2022 = futbolistas3$Assists.x, Assists_2022_2023 = futbolistas3$Assists.y, PasAss_2021_2022 = futbolistas3$PasAss.x, PasAss_2022_2023 = futbolistas3$PasAss.y, Total_Assists_2021_2022 = futbolistas3$Total_Assists.x, Total_Assists_2022_2023 = futbolistas3$Total_Assists.y, Total_Shots_2021_2022 = futbolistas3$Total_Shots.x, Total_Shots_2022_2023 = futbolistas3$Total_Shots.y, Total_SoT_2021_2022 = futbolistas3$Total_SoT.x, Total_SoT_2022_2023 = futbolistas3$Total_SoT.y, Total_Passes_2021_2022 = futbolistas3$Total_Passes.x, Total_Passes_2022_2023 = futbolistas3$Total_Passes.y, Total_Key_Passes_2021_2022 = futbolistas3$Total_Key_Passes.x, Total_Key_Passes_2022_2023 = futbolistas3$Total_Key_Passes.y)
+futbolistas <- data.frame(Player = futbolistas3$Player, Pos = futbolistas3$Pos, Age = futbolistas3$Age, Min_2021_2022 = futbolistas3$Min.y, Min_2022_2023 = futbolistas3$Min.x, Goals_2021_2022 = futbolistas3$Goals.y, Goals_2022_2023 = futbolistas3$Goals.x, Shots_2021_2022 = futbolistas3$Shots.y, Shots_2022_2023 = futbolistas3$Shots.x, SoT_2021_2022 = futbolistas3$SoT.y, SoT_2022_2023 = futbolistas3$SoT.x, PassTotCmp_2021_2022 = futbolistas3$PasTotCmp.y, PassTotCmp_2022_2023 = futbolistas3$PasTotCmp.x, Assists_2021_2022 = futbolistas3$Assists.y, Assists_2022_2023 = futbolistas3$Assists.x, PasAss_2021_2022 = futbolistas3$PasAss.y, PasAss_2022_2023 = futbolistas3$PasAss.x, Total_Assists_2021_2022 = futbolistas3$Total_Assists.y, Total_Assists_2022_2023 = futbolistas3$Total_Assists.x, Total_Shots_2021_2022 = futbolistas3$Total_Shots.y, Total_Shots_2022_2023 = futbolistas3$Total_Shots.x, Total_SoT_2021_2022 = futbolistas3$Total_SoT.y, Total_SoT_2022_2023 = futbolistas3$Total_SoT.x, Total_Passes_2021_2022 = futbolistas3$Total_Passes.y, Total_Passes_2022_2023 = futbolistas3$Total_Passes.x, Total_Key_Passes_2021_2022 = futbolistas3$Total_Key_Passes.y, Total_Key_Passes_2022_2023 = futbolistas3$Total_Key_Passes.x)
 
 # Reemplazamos todos los valores NA con 0 en el dataframe
 futbolistas[is.na(futbolistas)] <- 0
@@ -172,7 +172,8 @@ head(futbolistas)
   Total_SoT: Tiros a puerta totales
   Total_Passes: Pases totales
   Total_Key_Passes: Pases clave totales
-  
+
+  Además se especifica la temporada en que fueron recogidos los datos.
   
   Ahora, una vez procesado nuestro dataset y ya con los datos adecuados para seguir trabajando, entramos en materia. Veremos como se distribuyen tanto los goles como las asistencias en los jugadores sin importar la posición:
   
@@ -184,14 +185,14 @@ Defensas <- subset(futbolistas, Pos == "DF")
 Centrocampistas <- subset(futbolistas, Pos == "MF")
 Delanteros <- subset(futbolistas, Pos == "FW")
 
-#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles)
-plot(futbolistas$Total_Shots, futbolistas$Goals, col="Blue", main = "Distribución de los goles en función de los tiros realizados", xlab = "Tiros totales", ylab="Goles")
-lm_futbolistas <- lm(Goals ~ Total_Shots, data = futbolistas)
-coef(lm_futbolistas)
-abline(coef = coef(lm_futbolistas), col = "Red")
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Goles en la temporada 2021-2022)
+plot(futbolistas$Total_Shots_2021_2022, futbolistas$Goals_2021_2022, col="Blue", main = "Distribución de los goles en función de los tiros realizados 2021-2022", xlab = "Tiros totales 2021-2022", ylab="Goles 2021-2022")
+lm_futbolistas_1 <- lm(Goals_2021_2022 ~ Total_Shots_2021_2022, data = futbolistas)
+coef(lm_futbolistas_1)
+abline(coef = coef(lm_futbolistas_1), col = "Red")
 
-plot(lm_futbolistas$residuals, main = "Gráfica de residuos en goles", ylab="Residuos")
-hist(lm_futbolistas$residuals)
+plot(lm_futbolistas_1$residuals, main = "Gráfica de residuos en goles", ylab="Residuos")
+hist(lm_futbolistas_1$residuals)
 
 
 ```
@@ -202,43 +203,43 @@ hist(lm_futbolistas$residuals)
   
   Siguiendo con la normalidad, utilizaremos el gráfico de probabilidad-normal paraaceptar esta suposición o rechazarla. Este método muestra los cuantiles de la muestra frente a los cuantiles teóricos. Además añadimos una recta que relaciona de manera ideal ambos cuantiles. Digamos que sería lo "más normal".
 ```{r}
-qqnorm(lm_futbolistas$residuals)
-qqline(lm_futbolistas$residuals)
+qqnorm(lm_futbolistas_1$residuals)
+qqline(lm_futbolistas_1$residuals)
 ```
-  Vemos que nuestros cuantiles se ajustan bastante bien a los teóricos. Podemos afirmar que cumple con la normalidad.
+  Vemos que nuestros cuantiles no se ajustan bien a los teóricos. Podemos afirmar que NO cumple con la normalidad.
   
   Por último, hablemos de homocedasticidad.
 ```{r}
 # Creamos un gráfico de dispersión de residuos versus valores predichos
-plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión de residuos vs valores predichos")
+plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión de residuos vs valores predichos")
 ```
   Podemos observar que la relación entre valores predichos y los residuos sigue una tendencia decreciente. Sabemos que para aceptar la homocedasticidad debería no haber patrones. Por tanto podemos aceptar la heterocedasticidad.
   
-  Todo esto con el modelo que relaciona los goles con los tiros. Vayamos ahora a las asistencias frente a los pases totales.
+  Todo esto con el modelo que relaciona los goles con los tiros en la temporada 2021-2022. Vayamos ahora a las asistencias frente a los pases totales.
 ```{r}
-#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias)
-plot(futbolistas$Total_Passes,futbolistas$Total_Assists, col="Blue", xlab = "Pases Totales", ylab = "Asistencias", main = "Distribución de las asistencias en función de los pases realizados")
-lm_futbolistas <- lm(Total_Assists ~ Total_Passes, data = futbolistas)
-coef(lm_futbolistas)
-abline(coef = coef(lm_futbolistas), col = "Red")
+#Construimos la nube de puntos junto con la recta de mínimos cuadrados (Asistencias en 2021-2022)
+plot(futbolistas$Total_Passes_2021_2022,futbolistas$Total_Assists_2021_2022, col="Blue", xlab = "Pases Totales 2021-2022", ylab = "Asistencias 2021-2022", main = "Distribución de las asistencias en función de los pases realizados 2021-2022")
+lm_futbolistas_1 <- lm(Total_Assists_2021_2022 ~ Total_Passes_2021_2022, data = futbolistas)
+coef(lm_futbolistas_1)
+abline(coef = coef(lm_futbolistas_1), col = "Red")
 #Tener en cuenta los pases clave si pertoca
 
-plot(lm_futbolistas$residuals, main = "Gráfica de residuos en asistencias", ylab = "Residuos")
-hist(lm_futbolistas$residuals)
+plot(lm_futbolistas_1$residuals, main = "Gráfica de residuos en asistencias", ylab = "Residuos")
+hist(lm_futbolistas_1$residuals)
 ``` 
   Con respecto a la linealidad no podemos asegurar que lo sea, pues no sólo no se distribuyen los datos en forma de recta sino que además los residuos no se distribuyen exactamente entorno al 0 sino que está un poco desplazado.
   
   Analicemos ahora la normalidad siguiendo el mismo procedimiento que antes:
 ```{r}
-qqnorm(lm_futbolistas$residuals)
-qqline(lm_futbolistas$residuals)
+qqnorm(lm_futbolistas_1$residuals)
+qqline(lm_futbolistas_1$residuals)
 ```
   Vemos que no cumple con la normalidad.
   
   Por último, vayamos con la homocedasticidad:
 ```{r}
 # Creamos un gráfico de dispersión de residuos versus valores predichos
-plot(lm_futbolistas$residuals, lm_futbolistas$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
+plot(lm_futbolistas_1$residuals, lm_futbolistas_1$fitted.values, xlab = "Residuos", ylab = "Valores Predichos", main = "Gráfico de dispersión vs. valores predichos")
 ```
  Podemos decir que no cumple con la homocedasticidad pues siguen una tendencia descendente. Por tanto aceptamos la heterocedasticidad.
   
