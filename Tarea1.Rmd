@@ -12,6 +12,7 @@ knitr::opts_chunk$set(include = FALSE)
 ```
 
 ```{r include=FALSE}
+#En este chunk cargaremos las librerías que utilizaremos.
 library(readr)
 library(dplyr)
 library(ggplot2)
@@ -20,14 +21,14 @@ library(corrplot)
 
 #### 1. Un pequeño resumen.
 
-  En nuestro grupo hemos decidido aplicar los conocimientos que hemos adquirido en la asignatura de Modelos Lineales al dataset "2022-2023 Football Player Stats.csv" extraído https://www.kaggle.com/datasets/vivovinco/20222023-football-player-stats?resource=download .
+  En nuestro grupo hemos decidido aplicar los conocimientos que hemos adquirido en la asignatura de Modelos Lineales a los datasets "2022-2023 Football Player Stats.csv" y  "2021-2022 Football Player Stats.csv" extraídos de https://www.kaggle.com/datasets/vivovinco/20222023-football-player-stats?resource=download y https://www.kaggle.com/datasets/vivovinco/20212022-football-player-stats?resource=download respectivamente.
   
   Es por ello que trabajaremos con el fin último de predecir los máximos goleadores y asistentes de las mejores ligas de fútbol europeas.
 
 
 #### 2. Introducción.  
 
-  Nuestro dataset original cuenta con 124 variables y +2500 observaciones. Cabe destacar que no trabajaremos con el dataset original sino que  lo haremos con uno con menos variables y observaciones que se acople al nivel del análisis que realizaremos. Para reducirlo hemos tenido en cuenta sólo algunas variables que consideramos son las más influyentes en cuanto a goles y asistencias. 
+  Nuestros datasets originales cuentan con 124 variables y +2500 observaciones y 143 variables y +2900 observaciones respectvamente. Cabe destacar que no trabajaremos con los datasets originales sino que  los juntaremos y haremos con uno con menos variables y observaciones que se acople al nivel del análisis que realizaremos. Para reducirlo hemos tenido en cuenta sólo algunas variables que consideramos son las más influyentes en cuanto a goles y asistencias. Nuestro dataset original cuenta con 124 variables y +2500 observaciones. Cabe destacar que no trabajaremos con el dataset original sino que  lo haremos con uno con menos variables y observaciones que se acople al nivel del análisis que realizaremos. Para reducirlo hemos tenido en cuenta sólo algunas variables que consideramos son las más influyentes en cuanto a goles y asistencias. 
   
   A medida que hemos avanzado con el preprocesado de los datos, nos hemos dado cuenta de que algunas variables no eran del tipo que les tocaba para poder ser analizadas correctamente. Por ejemplo la variable SoT (Shots on Target) originalmente era de tipo character. Para seguir con nuestro análisis hemos cambiado el tipo de algunas variables.
   
@@ -462,4 +463,5 @@ head(resultado, 10)
 
 #### 4. Conclusiones
   A medida que hemos ido avanzando nos hemos dado cuenta de que convenía incluir más datos de otra temporada, para así mejorar el modelo y predecir con un poco más exactitud. Además, tener un modelo u otro hace variar mucho las predicciones. Hemos probado con varios modelos, algunos prediciendo barbaridades, y nos hemos dado cuenta de la importancia que tiene la correlación, de que las covariables sean buenas predictoras de la variable respuesta.
+
 
