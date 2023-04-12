@@ -39,38 +39,111 @@ library(corrplot)
   
 ```{r echo=TRUE}
 #Cargamos el dataset
-futbolistas <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'UTF-8')
+futbolistas1 <- read.csv2("2022-2023 Football PLayer Stats.csv", encoding = 'UTF-8')
+futbolistas3 <- read.csv2("2021-2022 Football Player Stats.csv", encoding =  'UTF-8')
 ```
 
   Para trabajar de manera más cómoda y acorde a nuestros objetivos, modificaremos el dataset:   
+  
+```{r}
+#Comenzamos seleccionando las columnas con las que trabajaremos
+futbolistas1 <- futbolistas1[, c("Player","Age","Pos","Min","Goals","Shots","SoT","PasTotCmp","Assists","PasAss")]
+futbolistas3 <- futbolistas3[, c("Player","Pos","Age","Min","Goals","Shots","SoT","PasTotCmp","Assists","PasAss")]
+futbolistas2 <- data.frame(Player = futbolistas3$Player, Age = futbolistas3$Age, Pos = futbolistas3$Pos, Min = futbolistas3$Min, Goals = futbolistas3$Goals, Shots = futbolistas3$Shots, SoT = futbolistas3$SoT, PasTotCmp = futbolistas3$PasTotCmp, Assists = futbolistas3$Assists, PasAss = futbolistas3$PasAss)
+```
+
 
 ```{r echo=TRUE}
-#Comenzamos seleccionando las columnas con las que trabajaremos
-futbolistas<-futbolistas[, c("Player","Age","Pos","Min","Goals","Shots","SoT","PasTotCmp","Assists","PasAss")]
-
+#Data Frame FUTBOLISTAS1
 #Convertimos cada variable al tipo adecuado para trabajar con ellas de manera correcta
-futbolistas$Assists <- as.numeric(futbolistas$Assists)
-futbolistas$Min <- as.numeric(futbolistas$Min)
-futbolistas$Goals <- as.numeric(futbolistas$Goals)
-futbolistas$Shots <- as.numeric(futbolistas$Shots)
-futbolistas$SoT <- as.numeric(futbolistas$SoT)
-futbolistas$PasTotCmp <- as.numeric(futbolistas$PasTotCmp)
-futbolistas$PasAss <- as.numeric(futbolistas$PasAss)
-futbolistas$Pos <- ifelse(nchar(futbolistas$Pos) > 2, substr(futbolistas$Pos, 1, 2), futbolistas$Pos)
-futbolistas$Pos <- as.factor(futbolistas$Pos)
+futbolistas1$Assists <- as.numeric(futbolistas1$Assists)
+futbolistas1$Min <- as.numeric(futbolistas1$Min)
+futbolistas1$Goals <- as.numeric(futbolistas1$Goals)
+futbolistas1$Shots <- as.numeric(futbolistas1$Shots)
+futbolistas1$SoT <- as.numeric(futbolistas1$SoT)
+futbolistas1$PasTotCmp <- as.numeric(futbolistas1$PasTotCmp)
+futbolistas1$PasAss <- as.numeric(futbolistas1$PasAss)
+futbolistas1$Pos <- as.character(futbolistas1$Pos)
+futbolistas1$Pos <- ifelse(nchar(futbolistas1$Pos) > 2, substr(futbolistas1$Pos, 1, 2), futbolistas1$Pos)
+futbolistas1$Pos <- as.factor(futbolistas1$Pos)
 
 #Creamos variables en las que recogeremos las estadísticas totales (en nuestro dataset se muestran estadísticas por partidos)
-futbolistas <- futbolistas %>% mutate(Total_Assists = round((futbolistas$Min/90) * futbolistas$Assists))
-futbolistas <- futbolistas %>% mutate(Total_Shots = round((futbolistas$Min/90) * futbolistas$Shots))
-futbolistas <- futbolistas %>% mutate(Total_SoT = round((futbolistas$Min/90) * futbolistas$SoT))
-futbolistas <- futbolistas %>% mutate(Total_Passes = round((futbolistas$Min/90) * futbolistas$PasTotCmp))
-futbolistas <- futbolistas %>% mutate(Total_Key_Passes = round((futbolistas$Min/90) * futbolistas$PasAss))
+futbolistas1 <- futbolistas1 %>% mutate(Total_Assists = round((futbolistas1$Min/90) * futbolistas1$Assists))
+futbolistas1 <- futbolistas1 %>% mutate(Total_Shots = round((futbolistas1$Min/90) * futbolistas1$Shots))
+futbolistas1 <- futbolistas1 %>% mutate(Total_SoT = round((futbolistas1$Min/90) * futbolistas1$SoT))
+futbolistas1 <- futbolistas1 %>% mutate(Total_Passes = round((futbolistas1$Min/90) * futbolistas1$PasTotCmp))
+futbolistas1 <- futbolistas1 %>% mutate(Total_Key_Passes = round((futbolistas1$Min/90) * futbolistas1$PasAss))
 
 #Nos quedamos con las observaciones que cumplan las condiciones (no tiene sentido tener en cuenta jugadores que no han jugado)
-futbolistas <- futbolistas %>% filter(Min >= 90)    %>%
+futbolistas1 <- futbolistas1 %>% filter(Min >= 90)    %>%
                                filter(Pos != "GK")  %>% 
                                filter(Assists > 0 | Goals > 0)
 ```
+
+```{r}
+#Data Frame FUTBOLISTAS2
+#Convertimos cada variable al tipo adecuado para trabajar con ellas de manera correcta
+futbolistas2$Assists <- as.numeric(futbolistas2$Assists)
+futbolistas2$Min <- as.numeric(futbolistas2$Min)
+futbolistas2$Goals <- as.numeric(futbolistas2$Goals)
+futbolistas2$Shots <- as.numeric(futbolistas2$Shots)
+futbolistas2$SoT <- as.numeric(futbolistas2$SoT)
+futbolistas2$PasTotCmp <- as.numeric(futbolistas2$PasTotCmp)
+futbolistas2$PasAss <- as.numeric(futbolistas2$PasAss)
+futbolistas2$Pos <- as.character(futbolistas2$Pos)
+futbolistas2$Pos <- ifelse(nchar(futbolistas2$Pos) > 2, substr(futbolistas2$Pos, 1, 2), futbolistas2$Pos)
+futbolistas2$Pos <- as.factor(futbolistas2$Pos)
+
+#Creamos variables en las que recogeremos las estadísticas totales (en nuestro dataset se muestran estadísticas por partidos)
+futbolistas2 <- futbolistas2 %>% mutate(Total_Assists = round((futbolistas2$Min/90) * futbolistas2$Assists))
+futbolistas2 <- futbolistas2 %>% mutate(Total_Shots = round((futbolistas2$Min/90) * futbolistas2$Shots))
+futbolistas2 <- futbolistas2 %>% mutate(Total_SoT = round((futbolistas2$Min/90) * futbolistas2$SoT))
+futbolistas2 <- futbolistas2 %>% mutate(Total_Passes = round((futbolistas2$Min/90) * futbolistas2$PasTotCmp))
+futbolistas2 <- futbolistas2 %>% mutate(Total_Key_Passes = round((futbolistas2$Min/90) * futbolistas2$PasAss))
+futbolistas2 <- futbolistas2 %>% mutate(Goals = round((futbolistas2$Min*futbolistas2$Goals)/90))
+
+#Nos quedamos con las observaciones que cumplan las condiciones (no tiene sentido tener en cuenta jugadores que no han jugado)
+futbolistas2 <- futbolistas2 %>% filter(Min >= 90)    %>%
+                               filter(Pos != "GK")  %>% 
+                               filter(Assists > 0 | Goals > 0)
+
+#Eliminamos el dataframe auxiliar
+rm(futbolistas3)
+```
+
+```{r}
+# Realizamos la fusión de los dataframes
+futbolistas3 <- merge(futbolistas1, futbolistas2, by = "Player", all = TRUE)
+
+# Rellenar valores NA en la columna Age con la edad de la otra columna
+futbolistas3$Age <- ifelse(is.na(futbolistas3$Age.x), futbolistas3$Age.y, futbolistas3$Age.x)
+
+# Eliminar las columnas Age.x y Age.y
+futbolistas3 <- subset(futbolistas3, select = -c(Age.x, Age.y))
+
+# Renombrar la columna Age
+colnames(futbolistas3)[colnames(futbolistas3) == "Age"] <- "Age"
+
+#Hacemos lo mismo para la columna Pos
+futbolistas3$Pos.x <- as.character(futbolistas3$Pos.x)
+futbolistas3$Pos.y <- as.character(futbolistas3$Pos.y)
+
+# Rellenar valores NA en la columna Pos con la posición de la otra columna
+futbolistas3$Pos <- ifelse(is.na(futbolistas3$Pos.x), futbolistas3$Pos.y, futbolistas3$Pos.x)
+
+# Eliminar las columnas Pos.x y Pos.y
+futbolistas3 <- subset(futbolistas3, select = -c(Pos.x, Pos.y))
+
+# Renombrar la columna Pos
+colnames(futbolistas3)[colnames(futbolistas3) == "Pos"] <- "Pos"
+futbolistas3$Pos <- as.factor(futbolistas3$Pos)
+```
+
+```{r}
+#Construimos el dataframe definitivo
+futbolistas <- data.frame(Player = futbolistas3$Player)
+```
+
 
 ```{r echo=TRUE}
 head(futbolistas)
@@ -239,6 +312,38 @@ modelo_asistencias1 <- lm(Total_Assists ~ ., data = futbolistas)
 #Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
 modelo_asistencias <- step(modelo_asistencias1)
 ```
+
+
+```{r}
+# Obtener predicciones del modelo de goles
+predicciones_goles <- predict(modelo_goles)
+
+# Crear un nuevo dataframe con los nombres de los futbolistas y las predicciones de goles
+resultado <- data.frame(Nombre = futbolistas$Player, Goles_Predichos = round(predicciones_goles))
+
+# Ordenar el dataframe por el número de goles predichos en orden descendente
+resultado <- resultado[order(resultado$Goles_Predichos, decreasing = TRUE), ]
+
+# Imprimir el resultado ordenado
+print(resultado)
+
+```
+
+```{r}
+# Obtenemos predicciones del modelo de asistencias
+predicciones_asistencias <- predict(modelo_asistencias)
+
+# Crear un nuevo dataframe con los nombres de los futbolistas y las predicciones de goles
+resultado <- data.frame(Nombre = futbolistas$Player, Asistencias_Predichas = round(predicciones_asistencias))
+
+# Ordenar el dataframe por el número de goles predichos en orden descendente
+resultado <- resultado[order(resultado$Asistencias_Predichas, decreasing = TRUE), ]
+
+# Imprimir el resultado ordenado
+print(resultado)
+```
+
+
 
 ```{r echo=TRUE}
 modelo <- lm(Goals ~ Age + Pos + Min + Total_Shots + Total_SoT , data = futbolistas)
