@@ -409,6 +409,11 @@ modelo_goles1 <- lm(Goals_2022_2023 ~ ., data = futbolistas)
 
 #Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
 modelo_goles <- step(modelo_goles1)
+
+#Puede que sea muy costoso y cueste mucho realizar estas operaciones. A continuación mostramos el modelo resultado del Step. El modelo que mejor predice los goles (en caso de que tarde mucho el código anterior, comentarlo y ejecutar el siguiente):
+
+#modelo_goles <- lm(Goals_2022_2023 ~ Player + Pos + Age + Min_2021_2022 + Min_2022_2023 + Shots_2021_2022 + Shots_2022_2023 +SoT_2021_2022 + SoT_2022_2023 + PassTotCmp_2022_2023 + Assists_2022_2023 + PasAss_2021_2022 + PasAss_2022_2023 + Total_Assists_2022_2023 + Total_Shots_2021_2022 + Total_SoT_2021_2022 + Total_SoT_2022_2023 + Total_Passes_2022_2023 + Total_Key_Passes_2021_2022 + Total_Key_Passes_2022_2023, data = futbolistas)
+
 ```
 
   Hagamos lo mismo con las asistencias:
@@ -419,6 +424,9 @@ modelo_asistencias1 <- lm(Total_Assists_2022_2023 ~ ., data = futbolistas)
 
 #Con la ayuda de la herramienta step, obtendremos el modelo que mejor predice la variable que nos interesa:
 modelo_asistencias <- step(modelo_asistencias1)
+
+#Puede que sea muy costoso y cueste mucho realizar estas operaciones. A continuación mostramos el modelo resultado del Step. El modelo que mejor predice las asistencias (en caso de que tarde mucho el código anterior, comentarlo y ejecutar el siguiente):
+#modelo_asistencias <- lm(Total_Assists_2022_2023 ~ Player + Pos + Age + Min_2021_2022 + Min_2022_2023 + Goals_2021_2022 + Goals_2022_2023 + Shots_2021_2022 + Shots_2022_2023 + SoT_2021_2022 + SoT_2022_2023 + PassTotCmp_2021_2022 + PassTotCmp_2022_2023 + Assists_2022_2023 + PasAss_2021_2022 + PasAss_2022_2023 + Total_Shots_2021_2022 + Total_Shots_2022_2023 + Total_SoT_2021_2022 + Total_SoT_2022_2023 + Total_Passes_2022_2023 +Total_Key_Passes_2021_2022 + Total_Key_Passes_2022_2023, data = futbolistas)
 ```
   Supongamos que la temporada que viene recogemos datos similares a la media entre las dos temporadas de las que tenemos datos. El dataframe quedaría así:
 
@@ -427,7 +435,7 @@ modelo_asistencias <- step(modelo_asistencias1)
 goles2023_2024 <- data.frame(Player = futbolistas$Player, Pos = futbolistas$Pos, Age = futbolistas$Age, Min_2021_2022 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Min_2022_2023 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Shots_2021_2022 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2),Shots_2022_2023 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2), SoT_2021_2022 = (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2,SoT_2022_2023= (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2, PassTotCmp_2021_2022 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2,PassTotCmp_2022_2023 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2, Assists_2021_2022 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2,Assists_2022_2023 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2, PasAss_2021_2022 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2,PasAss_2022_2023 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2, Total_Assists_2021_2022 = (futbolistas$Total_Assists_2021_2022+futbolistas$Total_Assists_2022_2023)/2,Total_Assists_2022_2023 = (futbolistas$Total_Assists_2021_2022+futbolistas$Total_Assists_2022_2023)/2, Total_Shots_2021_2022 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2,Total_Shots_2022_2023 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2, Total_SoT_2021_2022 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2,Total_SoT_2022_2023 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2, Total_Passes_2021_2022 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2,Total_Passes_2022_2023 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2, Total_Key_Passes_2021_2022 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2,Total_Key_Passes_2022_2023 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2)
 
 #Para predecir las asistencias
-asistencias2023_2024 <- data.frame(Player = futbolistas$Player, Pos = futbolistas$Pos, Age = futbolistas$Age, Min_2021_2022 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Min_2022_2023 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Goals_2021_2022 = (futbolistas$Goals_2021_2022+futbolistas$Goals_2022_2023)/2,Goals_2022_2023 = (futbolistas$Goals_2021_2022+futbolistas$Goals_2022_2023)/2, Shots_2021_2022 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2),Shots_2022_2023 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2), SoT_2021_2022 = (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2,SoT_2022_2023= (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2, PassTotCmp_2021_2022 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2,PassTotCmp_2022_2023 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2, Assists_2021_2022 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2,Assists_2022_2023 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2, PasAss_2021_2022 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2,PasAss_2022_2023 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2, Total_Shots_2021_2022 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2,Total_Shots_2022_2023 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2, Total_SoT_2021_2022 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2,Total_SoT_2022_2023 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2, Total_Passes_2021_2022 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2,Total_Passes_2022_2023 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2, Total_Key_Passes_2021_2022 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2,Total_Key_Passes_2022_2023 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2)
+asistencias2023_2024 <- data.frame(Player = futbolistas$Player, Pos = futbolistas$Pos, Age = futbolistas$Age, Min_2021_2022 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Min_2022_2023 = (futbolistas$Min_2021_2022+futbolistas$Min_2022_2023)/2, Goals_2021_2022 = (futbolistas$Goals_2021_2022+futbolistas$Goals_2022_2023)/2,Goals_2022_2023 = (futbolistas$Goals_2021_2022+futbolistas$Goals_2022_2023)/2, Shots_2021_2022 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2),Shots_2022_2023 = (futbolistas$Shots_2021_2022+futbolistas$Shots_2022_2023/2), SoT_2021_2022 = (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2,SoT_2022_2023= (futbolistas$SoT_2021_2022+futbolistas$SoT_2022_2023)/2, PassTotCmp_2021_2022 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2,PassTotCmp_2022_2023 = (futbolistas$PassTotCmp_2021_2022+futbolistas$PassTotCmp_2022_2023)/2, Assists_2021_2022 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2,Assists_2022_2023 = (futbolistas$Assists_2021_2022+futbolistas$Assists_2022_2023)/2, PasAss_2021_2022 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2,PasAss_2022_2023 = (futbolistas$PasAss_2021_2022+futbolistas$PasAss_2022_2023)/2,Total_Assists_2021_2022 = (futbolistas$Total_Assists_2021_2022+futbolistas$Total_Assists_2022_2023)/2, Total_Shots_2021_2022 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2,Total_Shots_2022_2023 = (futbolistas$Total_Shots_2021_2022+futbolistas$Total_Shots_2022_2023)/2, Total_SoT_2021_2022 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2,Total_SoT_2022_2023 = (futbolistas$Total_SoT_2021_2022+futbolistas$Total_SoT_2022_2023)/2, Total_Passes_2021_2022 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2,Total_Passes_2022_2023 = (futbolistas$Total_Passes_2021_2022+futbolistas$Total_Passes_2022_2023)/2, Total_Key_Passes_2021_2022 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2,Total_Key_Passes_2022_2023 = (futbolistas$Total_Key_Passes_2021_2022+futbolistas$Total_Key_Passes_2022_2023)/2)
 ```
 
 
@@ -463,5 +471,26 @@ head(resultado, 10)
 
 #### 4. Conclusiones
   A medida que hemos ido avanzando nos hemos dado cuenta de que convenía incluir más datos de otra temporada, para así mejorar el modelo y predecir con un poco más exactitud. Además, tener un modelo u otro hace variar mucho las predicciones. Hemos probado con varios modelos, algunos prediciendo barbaridades, y nos hemos dado cuenta de la importancia que tiene la correlación, de que las covariables sean buenas predictoras de la variable respuesta.
+
+
+
+
+```{r}
+#Primero comenzaremos tomando todas las variables 
+modeloprueba <- lm(Goals_2022_2023 ~ Player + Pos + Age + Min_2021_2022 + Min_2022_2023 + 
+    Shots_2021_2022 + Shots_2022_2023 + SoT_2021_2022 + SoT_2022_2023 + 
+    PassTotCmp_2022_2023 + Assists_2022_2023 + PasAss_2021_2022 + 
+    PasAss_2022_2023 + Total_Assists_2022_2023 + Total_Shots_2021_2022 + 
+    Total_SoT_2021_2022 + Total_SoT_2022_2023 + Total_Passes_2022_2023 + 
+    Total_Key_Passes_2021_2022 + Total_Key_Passes_2022_2023, data = futbolistas)
+```
+
+
+
+
+
+
+
+
 
 
